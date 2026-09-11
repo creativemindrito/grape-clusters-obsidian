@@ -1,6 +1,15 @@
 # Grape Clusters
 
-🍇 Part of the Vineyard family for Obsidian. The theme in the screenshot is [Bordeaux](https://github.com/creativemindrito/bordeaux-theme-obsidian).
+![Welcome to the Vineyard family: Grape Clusters, a plugin for Obsidian](banner.png)
+
+## The Vineyard family
+
+Vineyard is what I call the little Obsidian things I make and give away. There are two so far. They work fine on their own, but they look best together.
+
+| | 💎 Obsidian | 🐙 GitHub |
+|---|---|---|
+| 🍇 **Grape Clusters**, the plugin on this page | [Plugin page](https://community.obsidian.md/plugins/grape-clusters) | [Repository](https://github.com/creativemindrito/grape-clusters-obsidian) |
+| 🍷 **Bordeaux**, the dark red theme in the screenshots | [Theme page](https://community.obsidian.md/themes/bordeaux) | [Repository](https://github.com/creativemindrito/bordeaux-theme-obsidian) |
 
 ![The same test vault of about 500 notes, first without and then with Grape Clusters](screenshot.png)
 
@@ -59,12 +68,13 @@ There's also a command called *Toggle folder clusters* if you want to flip back 
 
 ## Install
 
-It's not in the community plugin list yet. Until it is:
+There are three ways. Pick the one you like.
 
-1. Download `main.js` and `manifest.json` from the [latest release](https://github.com/creativemindrito/grape-clusters-obsidian/releases/latest).
-2. Make a folder called `grape-clusters` in `.obsidian/plugins/` inside your vault and put both files in it.
-3. In Obsidian, go to *Settings → Community plugins*, reload the list and switch on Grape Clusters.
-4. Open the graph view.
+- **In Obsidian:** open *Settings → Community plugins*, click *Browse* and search for Grape Clusters. Click *Install*, then *Enable*. Never used community plugins before? Obsidian asks you to turn them on first.
+- **On the Obsidian website:** open the [Grape Clusters page](https://community.obsidian.md/plugins/grape-clusters) and click *Add to Obsidian*. Obsidian opens on the plugin, and you click *Install* and *Enable*.
+- **By hand:** download `main.js` and `manifest.json` from the [latest release](https://github.com/creativemindrito/grape-clusters-obsidian/releases/latest). Put both files in a folder called `grape-clusters` in `.obsidian/plugins/` inside your vault, then switch it on under *Settings → Community plugins*.
+
+Then open the graph view.
 
 ## Privacy
 
@@ -72,7 +82,7 @@ Grape Clusters doesn't connect to the internet and it never touches your notes. 
 
 ## Heads-up
 
-The plugin hooks into parts of the graph view that aren't an official Obsidian API. I tested it on Obsidian 1.13. If a future update changes those parts, Grape Clusters won't break your graph. It just stops doing anything and tells you once. Turning it off always gives you the normal graph back.
+The plugin hooks into parts of the graph view that aren't an official Obsidian API. I tested it on Obsidian 1.13 on a computer. I haven't tried it on a phone yet. If a future update changes those parts, Grape Clusters won't break your graph. It just stops doing anything and tells you once. Turning it off always gives you the normal graph back.
 
 It only changes the big graph view. The local graph in the sidebar is left alone.
 
@@ -85,10 +95,6 @@ It only changes the big graph view. The local graph in the sidebar is left alone
 ## Uninstall
 
 Switch it off under *Settings → Community plugins* and the normal graph is back right away. Hit *Uninstall* there if you want it gone for good.
-
-## The Vineyard family
-
-Vineyard is what I call the little Obsidian things I make and give away. So far there are two: Grape Clusters and [Bordeaux](https://github.com/creativemindrito/bordeaux-theme-obsidian), a dark red theme. They work fine on their own. They just look best together.
 
 ## Made by
 
