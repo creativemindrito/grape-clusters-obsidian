@@ -1,0 +1,95 @@
+# Grape Clusters
+
+🍇 Part of the Vineyard family for Obsidian. The theme in the screenshot is [Bordeaux](https://github.com/creativemindrito/bordeaux-theme-obsidian).
+
+![The same test vault of about 500 notes, first without and then with Grape Clusters](screenshot.png)
+
+My graph view never really showed me anything. I'd open it to see how my notes hang together and get one big grey knot in the middle of the screen. That happens because my notes link across folders all the time: a journal entry mentions a project, a project mentions a person. Obsidian pulls all of that into one pile.
+
+I went looking for a setting to group the graph by folder. There isn't one. There are plugins that come close, but they either add extra folder nodes to your graph or swap it for a view of their own. I wanted something simpler: keep Obsidian's own graph, with my links and my colors, and let every folder pull its notes together. I couldn't find one that does just that, so I made my own.
+
+Grape Clusters pulls the notes in each folder together into their own bunch. Your links don't go anywhere. They're all still there, but the ones between folders are drawn lighter so you can actually see the groups. I tested it on a vault with about 500 notes and 1,800 links. That's the screenshot above. Then I kept going to 3,000.
+
+## How it looks
+
+I wanted to see if it holds up in a big vault, so I grew the same test vault in three steps. Every folder has its own color. These are real screenshots from Obsidian.
+
+**500 notes in 9 folders**
+
+![A test vault with 500 notes in 9 folders, every folder its own cluster](500-notes.png)
+
+**1,500 notes in 15 folders**
+
+![The same test vault with 1,500 notes in 15 folders](1500-notes.png)
+
+**3,000 notes: 2,700 in 21 folders and 300 loose ones**
+
+![The same test vault with 3,000 notes: 2,700 in 21 folders and 300 loose notes around the edge](3000-notes.png)
+
+I added the 300 loose notes on purpose, to see how notes outside the clusters behave. Half of them sit in a folder but aren't linked to anything. The other half live outside every folder and link in. Grape Clusters doesn't pull them in, so they float around the edge.
+
+At 3,000 notes the graph stutters a bit when you zoom all the way out. Zoomed in, it's smooth.
+
+## How it works
+
+The graph view is really two things. One part draws the dots and lines. The other part runs the physics that decides where every dot ends up.
+
+Grape Clusters only changes what the physics gets to see. It keeps the links between notes in the same folder. It also keeps a few links from the notes in the root of your vault to the main note of each folder, which I call the backbone. That's what stops the clusters from drifting apart. Every other link is still drawn. The physics just doesn't pull on it.
+
+The main note of a folder is any note that links to at least half of that folder. You probably have one already, like an index or a "start here" note. Grape Clusters finds it by itself.
+
+## Tips
+
+- Give each folder its own color. In the graph settings, open *Groups* and add something like `path:"Journal/"` with a color. This makes the biggest difference by far.
+- One index note per folder gives each cluster a clear middle.
+- If the clusters feel cramped, set the center force to 0 and turn the repel force up.
+
+## Settings
+
+| Setting | What it does | Default |
+|---|---|---|
+| Cluster by folder | Turns the whole thing on or off | On |
+| Backbone | Keeps the clusters hooked to the notes in your root folder | On |
+| Links between clusters | How visible the links between folders are | 15% |
+| Links inside a cluster | How visible the links inside a folder are | 40% |
+| Color links by folder | Lines inside a cluster get the color of that folder | On |
+| Show a summary | Pops up a small notice with the numbers when the graph rebuilds | Off |
+
+There's also a command called *Toggle folder clusters* if you want to flip back to the normal graph quickly.
+
+## Install
+
+It's not in the community plugin list yet. Until it is:
+
+1. Download `main.js` and `manifest.json` from the [latest release](https://github.com/creativemindrito/grape-clusters-obsidian/releases/latest).
+2. Make a folder called `grape-clusters` in `.obsidian/plugins/` inside your vault and put both files in it.
+3. In Obsidian, go to *Settings → Community plugins*, reload the list and switch on Grape Clusters.
+4. Open the graph view.
+
+## Privacy
+
+Grape Clusters doesn't connect to the internet and it never touches your notes. The only file it writes is its own settings file. The whole plugin is one file (`main.js`) without any dependencies, so you can read all of it if you like.
+
+## Heads-up
+
+The plugin hooks into parts of the graph view that aren't an official Obsidian API. I tested it on Obsidian 1.13. If a future update changes those parts, Grape Clusters won't break your graph. It just stops doing anything and tells you once. Turning it off always gives you the normal graph back.
+
+It only changes the big graph view. The local graph in the sidebar is left alone.
+
+## If nothing changes
+
+- Check that you're looking at the big graph view and not the local graph.
+- Clusters come from top-level folders. Notes in the root of your vault don't get a cluster of their own.
+- Still the same? Close the graph tab and open it again.
+
+## Uninstall
+
+Switch it off under *Settings → Community plugins* and the normal graph is back right away. Hit *Uninstall* there if you want it gone for good.
+
+## The Vineyard family
+
+Vineyard is what I call the little Obsidian things I make and give away. So far there are two: Grape Clusters and [Bordeaux](https://github.com/creativemindrito/bordeaux-theme-obsidian), a dark red theme. They work fine on their own. They just look best together.
+
+## Made by
+
+[creativemindrito](https://github.com/creativemindrito). Free to use under the [MIT license](LICENSE). Found a bug or have an idea? Open an issue. I'd like to hear it.
