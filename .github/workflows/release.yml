@@ -1,0 +1,45 @@
+name: Release
+
+# A version tag becomes a release, signed by GitHub.
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: The tag must match manifest.json
+        run: |
+          version="$(jq -r .version manifest.json)"
+          test "$version" = "$GITHUB_REF_NAME" || {
+            echo "The tag is $GITHUB_REF_NAME, but manifest.json says $version."
+            exit 1
+          }
+
+      - name: Release notes from the changelog
+        run: |
+          awk -v v="$GITHUB_REF_NAME" '$0 == "## " v { on = 1; next } /^## / { on = 0 } on' CHANGELOG.md > notes.md
+          test -s notes.md || { echo "CHANGELOG.md has no entry for $GITHUB_REF_NAME."; exit 1; }
+          printf '\nTo update, open *Settings → Community plugins* and click *Check for updates*.\n' >> notes.md
+          cat notes.md
+
+      - name: Sign main.js and manifest.json
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: |
+            main.js
+            manifest.json
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" main.js manifest.json --title "$GITHUB_REF_NAME" --notes-file notes.md

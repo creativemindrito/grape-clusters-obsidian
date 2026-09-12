@@ -86,6 +86,8 @@ Then open the graph view.
 
 Grape Clusters doesn't connect to the internet and it never touches your notes. The only file it writes is its own settings file. The whole plugin is one file (`main.js`) without any dependencies, so you can read all of it if you like.
 
+Every release is put together by GitHub itself from the tagged commit, and the files carry a GitHub attestation. If you want to check a download, run `gh attestation verify main.js --owner creativemindrito`.
+
 ## Heads-up
 
 The plugin hooks into parts of the graph view that aren't an official Obsidian API. I tested it on Obsidian 1.13 on a computer. I haven't tried it on a phone yet. If a future update changes those parts, Grape Clusters won't break your graph. It just stops doing anything and tells you once. Turning it off always gives you the normal graph back.
