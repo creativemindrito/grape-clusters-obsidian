@@ -45,20 +45,26 @@ The graph view is really two things. One part draws the dots and lines. The othe
 
 Grape Clusters only changes what the physics gets to see. It keeps the links between notes in the same folder. It also keeps a few links from the notes in the root of your vault to the main note of each folder, which I call the backbone. That's what stops the clusters from drifting apart. Every other link is still drawn. The physics just doesn't pull on it.
 
-The main note of a folder is any note that links to at least half of that folder. You probably have one already, like an index or a "start here" note. Grape Clusters finds it by itself.
+The main note of a folder is any note that's linked with at least half of that folder, in either direction. You probably have one already: an index, a status note, a "start here" note. Grape Clusters finds it by itself.
+
+Tags, attachments and links to notes you haven't written yet have no folder of their own, so they join the folder that uses them. If several folders use the same one, it stays loose and is only drawn. That way one `#todo` can't pull every folder back into a knot.
+
+A cluster is a top-level folder by default. If you keep your projects in subfolders, set *Folder depth* to 2 and every subfolder becomes its own bunch.
 
 ## Tips
 
-- Give each folder its own color. In the graph settings, open *Groups* and add something like `path:"Journal/"` with a color. This makes the biggest difference by far.
-- One index note per folder gives each cluster a clear middle.
-- If the clusters feel cramped, set the center force to 0 and turn the repel force up.
+- A cluster is made of links, not of folders. Grape Clusters only uses the links between notes in the same folder, so a folder whose notes don't link to each other stays a loose handful of dots. One index note per folder, linking to every note in it, is the fastest way to fix that.
+- Give each folder its own color. In the graph settings, open *Groups* and add something like `path:"Journal/"` with a color. The layout does the grouping; the color is what makes you see it.
+- Small folders stay small. A folder with one or two notes can't become a bunch, and that's fine.
+- These are the graph settings I use myself. Forces: center force 0, repel force 15.36, link force 0.66, link distance 102. Display: node size 1.18, link thickness 0.44, text fade threshold 0.8, arrows off. Start there and nudge until it feels right.
 
 ## Settings
 
 | Setting | What it does | Default |
 |---|---|---|
 | Cluster by folder | Turns the whole thing on or off | On |
-| Backbone | Keeps the clusters hooked to the notes in your root folder | On |
+| Backbone | Keeps the clusters hooked to the notes above them, like the ones in your root folder | On |
+| Folder depth | How deep a cluster forms: 1 is a top-level folder, 2 is every subfolder | 1 |
 | Links between clusters | How visible the links between folders are | 15% |
 | Links inside a cluster | How visible the links inside a folder are | 40% |
 | Color links by folder | Lines inside a cluster get the color of that folder | On |
@@ -89,7 +95,8 @@ It only changes the big graph view. The local graph in the sidebar is left alone
 ## If nothing changes
 
 - Check that you're looking at the big graph view and not the local graph.
-- Clusters come from top-level folders. Notes in the root of your vault don't get a cluster of their own.
+- Clusters come from folders: top-level ones, unless you raise *Folder depth*. Notes in the root of your vault don't get a cluster of their own.
+- A folder whose notes don't link to each other can't form a bunch. Give it an index note.
 - Still the same? Close the graph tab and open it again.
 
 ## Uninstall

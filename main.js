@@ -2,7 +2,10 @@
 // One cluster per folder.
 const { Plugin, PluginSettingTab, Setting, Notice } = require('obsidian');
 
-const DEFAULTS = { enabled: true, backbone: true, cables: 0.15, inside: 0.4, colorInside: true, summary: false };
+const DEFAULTS = { enabled: true, backbone: true, depth: 1, cables: 0.15, inside: 0.4, colorInside: true, summary: false };
+
+// Nodes without links of their own.
+const FOLLOWERS = new Set(['tag', 'unresolved', 'attachment']);
 
 // Top folder of a path.
 function topFolder(id) {
@@ -10,39 +13,94 @@ function topFolder(id) {
   return i < 0 ? '' : id.slice(0, i);
 }
 
+// The folder, as deep as asked.
+function folderOf(id, depth) {
+  const parts = id.split('/');
+  parts.pop();
+  return parts.slice(0, Math.max(1, Math.floor(depth) || 1)).join('/');
+}
+
+// Is folder a above folder b?
+function above(a, b) {
+  return a === '' ? b !== '' : b.startsWith(a + '/');
+}
+
 // Links the physics may see.
-function filterLinks(pairs, ids, typeOf, backbone) {
+function filterLinks(pairs, ids, typeOf, backbone, depth = 1) {
+  const deep = Math.max(1, Math.floor(depth) || 1);
+  // Once per note, not per link.
+  const folders = new Map();
+  const folder = (id) => {
+    let f = folders.get(id);
+    if (f === undefined) {
+      f = deep > 1 ? folderOf(id, deep) : topFolder(id);
+      folders.set(id, f);
+    }
+    return f;
+  };
+  const kinds = new Map();
+  const follows = (id) => {
+    let k = kinds.get(id);
+    if (k === undefined) {
+      k = FOLLOWERS.has(typeOf(id));
+      kinds.set(id, k);
+    }
+    return k;
+  };
   const members = new Map();
   for (const id of ids) {
-    if (typeOf(id) === 'tag') continue;
-    const folder = topFolder(id);
-    if (!members.has(folder)) members.set(folder, new Set());
-    members.get(folder).add(id);
+    if (follows(id)) continue;
+    const f = folder(id);
+    if (!members.has(f)) members.set(f, new Set());
+    members.get(f).add(id);
   }
-  const inside = new Map();
-  for (const [a, b] of pairs) {
-    const folder = topFolder(a);
-    if (folder && folder === topFolder(b)) inside.set(a, (inside.get(a) || 0) + 1);
-  }
-  // Hub: links half its folder.
-  const isHub = (id) => {
-    const folder = topFolder(id);
-    if (!folder || !members.has(folder)) return false;
-    const rest = members.get(folder).size - 1;
-    return (inside.get(id) || 0) >= Math.ceil(rest / 2);
+  // Where a follower is used.
+  const homes = new Map();
+  const home = (id, f) => {
+    if (!homes.has(id)) homes.set(id, new Set());
+    homes.get(id).add(f);
   };
-  const isRoot = (id) => topFolder(id) === '' && typeOf(id) === '';
+  // Neighbours inside the folder.
+  const inside = new Map();
+  const meet = (a, b) => {
+    if (!inside.has(a)) inside.set(a, new Set());
+    inside.get(a).add(b);
+  };
+  for (const [a, b] of pairs) {
+    const fa = follows(a);
+    const fb = follows(b);
+    if (fa && !fb) home(a, folder(b));
+    else if (fb && !fa) home(b, folder(a));
+    else if (!fa && !fb && a !== b && folder(a) === folder(b)) {
+      meet(a, b);
+      meet(b, a);
+    }
+  }
+  // Hub: linked with half its folder.
+  const hubs = new Set();
+  for (const [f, notes] of members) {
+    if (!f) continue;
+    const need = Math.ceil((notes.size - 1) / 2);
+    for (const id of notes) if ((inside.has(id) ? inside.get(id).size : 0) >= need) hubs.add(id);
+  }
   const keep = (a, b) => {
-    if (typeOf(a) === 'tag' || typeOf(b) === 'tag') return true;
-    if (topFolder(a) === topFolder(b)) return true;
+    const fa = follows(a);
+    const fb = follows(b);
+    if (fa && fb) return true;
+    // A follower joins one folder.
+    if (fa) return homes.get(a).size === 1;
+    if (fb) return homes.get(b).size === 1;
+    const A = folder(a);
+    const B = folder(b);
+    if (A === B) return true;
     if (!backbone) return false;
-    return (isRoot(a) && isHub(b)) || (isRoot(b) && isHub(a));
+    return (above(A, B) && hubs.has(b)) || (above(B, A) && hubs.has(a));
   };
   const links = pairs.filter(([a, b]) => keep(a, b));
   return {
     links,
     folders: [...members.keys()].filter(Boolean),
-    hubs: ids.filter(isHub),
+    hubs: [...hubs],
     kept: links.length,
     drawnOnly: pairs.length - links.length,
   };
@@ -112,7 +170,10 @@ class GrapeClusters extends Plugin {
   }
 
   attach(renderer) {
-    if (this.hooks.some((h) => h.renderer === renderer)) return;
+    const known = this.hooks.find((h) => h.renderer === renderer);
+    if (known && (known.worker === renderer.worker || !renderer.worker)) return;
+    // Obsidian swapped the worker.
+    if (known) this.hooks = this.hooks.filter((h) => h !== known);
     const worker = renderer.worker;
     const ok = worker && typeof worker.postMessage === 'function' && Array.isArray(renderer.links);
     if (!ok) {
@@ -156,7 +217,7 @@ class GrapeClusters extends Plugin {
   filterFor(renderer, pairs) {
     const types = new Map(renderer.nodes.map((n) => [n.id, n.type || '']));
     const typeOf = (id) => types.get(id) || '';
-    return filterLinks(pairs, [...types.keys()], typeOf, this.settings.backbone);
+    return filterLinks(pairs, [...types.keys()], typeOf, this.settings.backbone, this.settings.depth);
   }
 
   // Links that are only drawn.
@@ -262,9 +323,22 @@ class GrapeClustersSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
     this.toggle(containerEl, 'enabled', 'Cluster by folder',
-      'Every top-level folder becomes its own cluster. All links stay visible; only the layout listens to the links inside a folder.', true);
+      'Every folder becomes its own cluster. All links stay visible; only the layout listens to the links inside a folder.', true);
+    new Setting(containerEl)
+      .setName('Folder depth')
+      .setDesc('1 makes a cluster of every top-level folder. 2 gives every subfolder its own cluster, and so on.')
+      .addSlider((s) =>
+        s
+          .setLimits(1, 3, 1)
+          .setValue(this.plugin.settings.depth)
+          .setDynamicTooltip()
+          .onChange(async (v) => {
+            this.plugin.settings.depth = v;
+            await this.plugin.save();
+          })
+      );
     this.toggle(containerEl, 'backbone', 'Backbone',
-      'Notes in the root of your vault hold on to the hub of each folder, so the clusters stay together. A hub is a note that links to at least half of its folder.', true);
+      'Notes above a folder hold on to the main note of that folder, so the clusters stay together. A main note is linked with at least half of its folder.', true);
     this.slider(containerEl, 'cables', 'Links between clusters',
       'How visible the links between two folders are. 0 hides them, 100 draws them as usual. Hover a note to see all of its links.');
     this.slider(containerEl, 'inside', 'Links inside a cluster',
@@ -279,4 +353,6 @@ class GrapeClustersSettingTab extends PluginSettingTab {
 module.exports = GrapeClusters;
 module.exports.filterLinks = filterLinks;
 module.exports.topFolder = topFolder;
+module.exports.folderOf = folderOf;
+module.exports.above = above;
 module.exports.colorFor = colorFor;
