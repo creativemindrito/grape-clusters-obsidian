@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2
+
+- Clusters could drift apart while you dragged a note if center force was turned all the way down. The README now suggests 0.15, and the *Cluster by folder* setting says to keep it at 0.15 or higher. The README also shows step by step how a bunch forms, and there's a new table for when something in the graph looks off. The way the plugin lays out your graph did not change.
+
 ## 1.1.1
 
 - Releases are now made by GitHub itself from the tagged commit, and `main.js` and `manifest.json` come with a GitHub attestation. That was the one recommendation left in Obsidian's review of the plugin. The plugin itself did not change.

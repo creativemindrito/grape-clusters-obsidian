@@ -323,7 +323,7 @@ class GrapeClustersSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
     this.toggle(containerEl, 'enabled', 'Cluster by folder',
-      'Every folder becomes its own cluster. All links stay visible; only the layout listens to the links inside a folder.', true);
+      'Every folder becomes its own cluster. All links stay visible; only the layout listens to the links inside a folder. Keep Center force in the graph settings at 0.15 or higher. Without it, the clusters drift apart when you drag a note.', true);
     new Setting(containerEl)
       .setName('Folder depth')
       .setDesc('1 makes a cluster of every top-level folder. 2 gives every subfolder its own cluster, and so on.')
