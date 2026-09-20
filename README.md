@@ -4,7 +4,7 @@
 
 ## The Vineyard family
 
-Vineyard is what I call the little Obsidian things I make and give away. So far that's this plugin and a theme, and they look best together.
+Vineyard is what I call the little Obsidian things I make and give away. Right now that's this plugin and a theme.
 
 | | 💎 Obsidian | 🐙 GitHub |
 |---|---|---|
@@ -13,11 +13,13 @@ Vineyard is what I call the little Obsidian things I make and give away. So far 
 
 ![The same test vault of about 500 notes, first without and then with Grape Clusters](screenshot.png)
 
-My graph view never showed me much. I'd open it to see how my notes hang together and get one big grey knot in the middle of the screen. My notes link across folders all the time, a journal entry to a project and that project to a person, so Obsidian pulls everything into one pile.
+My graph view never showed me much. I'd open it to see how my notes hang together and get one big grey knot in the middle of the screen.
 
-I looked for a setting to group the graph by folder, and there isn't one. Some plugins come close, but they add extra dots for your folders or replace the graph with a view of their own. I wanted to keep Obsidian's own graph, with my links and my colors, and let every folder pull its notes together. I couldn't find one that works like that, so I made my own.
+That's how the graph works: every link is a pull. Two notes that link to each other get dragged towards one another, and where a note ends up is whatever all those pulls settle on. My notes link across folders all the time, a journal entry to a project and that project to a person, so everything pulls on everything and it all lands in one pile.
 
-Grape Clusters keeps all your links on the screen. The ones between folders get lighter, so you can see the bunches. I first tried it on a vault with about 500 notes and 1,800 links, which is the screenshot above, and then kept going to 3,000.
+I looked for a setting to group the graph by folder and there isn't one. I wanted to keep Obsidian's own graph, with my links and my colors, and still let every folder gather its own notes. So I made this.
+
+Grape Clusters picks which links are allowed to pull. Every link stays on the screen, only fainter, and how faint is up to you. Hover a note and its links come back at full strength. I first tried it on a vault of about 500 notes and 1,800 links, which is the screenshot above, and then kept going to 3,000.
 
 ## How it looks
 
@@ -31,27 +33,34 @@ I wanted to know if it holds up in a big vault, so I grew the same test vault in
 
 ![The same test vault with 1,500 notes in 15 folders](1500-notes.png)
 
-**3,000 notes: 2,700 in 21 folders and 300 loose ones**
+**3,000 notes in 21 folders, 300 of them loose**
 
-![The same test vault with 3,000 notes: 2,700 in 21 folders and 300 loose notes around the edge](3000-notes.png)
+![The same test vault with 3,000 notes in 21 folders, and 300 loose notes around the edge](3000-notes.png)
 
-I added the 300 loose notes on purpose, to see what happens to notes outside the clusters. Half of them are in a folder without a single link, and the other half sit outside every folder and link in. Grape Clusters doesn't pull them in, so they float around the edge.
+Those 300 are in there on purpose, to see what happens to notes that don't belong anywhere. Half of them sit in a folder and link to nothing at all, so there's nothing to pull them in. The other half sit in the root of the vault, outside every folder, each with one link into a folder. A note from outside only joins a cluster if it links to that folder's main note, and these link to a random note instead. Both kinds end up around the edge.
 
 At 3,000 notes the graph stutters a bit when you zoom all the way out. Zoomed in, it's smooth.
 
 ## How it works
 
-Grape Clusters works with the links you already have. When two notes in the same folder link to each other, they pull together. A link between two different folders stays visible but lighter, and it doesn't pull. That way every folder gathers its own notes and the bunches have room between them.
+Grape Clusters works with the links you already have. It doesn't add any and it doesn't take any away; it only decides which ones the layout is allowed to pull on.
 
-## Make your first bunch
+A link between two different folders lets go. That's what gives every folder room to gather its own notes, with space between the clusters. There's one exception: if a note outside a folder links to that folder's main note, that link still pulls, so a note in the root of your vault can hold a cluster in place. Without it the clusters drift apart. That's the *Backbone* setting.
 
-Here's how a bunch forms, with a `Recipes` folder as the example.
+Inside a folder, Grape Clusters looks for the main note: one that's linked with at least half of the folder, whether that note links to them or they link to it. Usually it's the note you made to list everything in there. Links to a main note pull. The other links inside that folder let go, so the folder settles into a wheel, the main note in the middle and everything else around it, instead of a knot. That's the *Spokes* setting. A folder can have more than one main note, and a folder without one keeps all its links, the way it worked before.
 
-1. Put a few notes in a folder, for example `Recipes`.
-2. Add one more note to that folder, say `Recipes index`, and link it to every recipe. This is the main note of the folder and it holds the bunch together. Grape Clusters finds it by itself as long as it's linked with at least half of the folder.
-3. Open the graph view. The recipes pull together around `Recipes index`.
-4. Link to `Recipes index` from a note in the root of your vault, like `Home`. Now the bunch stays near your other bunches instead of floating off on its own. The *Backbone* setting takes care of that.
-5. Give the bunch a color. In the graph settings, open *Groups* and add `path:"Recipes/"` with a color you like.
+On my test vault of 3,000 notes that lets go of 1,334 links across 21 folders, and my journal folder alone accounts for 544 of them.
+
+One thing to know before you turn it on. A wheel is held together by its spokes and nothing else, so every time Obsidian works the layout out again, which it does whenever you drag a note, the clusters pull in for a moment and spread back out. It settles in a second. Nothing is lost, it just moves more than you may be used to.
+
+## Make your first cluster
+
+Say you keep twenty recipes in a folder called `Recipes`.
+
+1. Add one more note to that folder and link it to every recipe. Most people call it something like `Recipes index`. Grape Clusters finds it by itself and treats it as the main note.
+2. Open the graph view. The recipes gather around it.
+3. From a note in the root of your vault, say `Home`, link to that new note. Now the cluster stays near the rest of your graph instead of floating off on its own.
+4. Give it a color. In the graph settings, open *Groups* and add `path:"Recipes/"` with a color you like.
 
 Do the same for your other folders. A folder with one or two notes stays small, and that's fine.
 
@@ -61,7 +70,7 @@ These are the settings I like best. Start from there and change whatever you lik
 
 **My graph settings**
 
-![My graph settings, with center force at 0.15](settings-graph.png)
+![My graph settings, with center force at 0.15 and link distance around 250](settings-graph.png)
 
 **Grape Clusters, the way it comes when you install it**
 
@@ -72,14 +81,21 @@ In Obsidian's settings, Grape Clusters has its own page at the bottom of the lis
 | Setting | What it does | Default |
 |---|---|---|
 | Cluster by folder | Turns the whole thing on or off | On |
-| Backbone | Keeps the clusters hooked to the notes above them, like the ones in your root folder | On |
-| Folder depth | How deep a cluster forms: 1 is a top-level folder, 2 is every subfolder | 1 |
-| Links between clusters | How visible the links between folders are | 15% |
-| Links inside a cluster | How visible the links inside a folder are | 40% |
-| Color links by folder | Lines inside a cluster get the color of that folder | On |
-| Show a summary | Pops up a small notice with the numbers when the graph rebuilds | Off |
+| Folder depth | Which folders get a cluster: 1 is your top-level folders, 2 is every subfolder | 1 |
+| Backbone | Lets a note above a folder pull on that folder's main note, so the clusters stay together | On |
+| Spokes | Inside a folder, only the links to its main note pull. The rest stay on screen and let go | On |
+| Ring | Holds the main note of every folder that has one in a fixed spot on a circle | Off |
+| Ring spacing | Makes that circle wider or narrower | 100% |
+| Links between clusters | How visible the links are that let go. At 0 they disappear | 15% |
+| Links inside a cluster | How visible the links are that still pull | 40% |
+| Color links by folder | Links inside a cluster get the color of that folder | On |
+| Show a summary | Shows a short notice with the numbers whenever they change | Off |
+
+*Links between clusters* and *Links inside a cluster* go by whether a link still pulls, not by where it runs. So with *Spokes* on, the links inside a folder that let go follow *Links between clusters* along with the rest.
 
 There's also a command called *Toggle folder clusters* if you want to flip back to the normal graph quickly.
+
+**About Ring.** Everything else in this plugin only chooses which links pull, and leaves the placing to Obsidian. Ring is the one setting that doesn't: it holds the main note of every folder on a spot on a circle, in alphabetical order, and puts it back if you drag it away. A folder without a main note doesn't get a spot and keeps drifting, and a folder with more than one puts only its best connected note on the circle. In the middle goes the note in the root of your vault that links to the most main notes, and if you don't have one the middle stays empty. It's tidy on a small vault. On a big one it ends up as a tight circle of clusters with a wide scatter of loose notes around it, and I liked my own graph better without it, which is why it's off unless you ask for it. The circle already follows *Link distance* from your graph settings, and *Ring spacing* widens or narrows it from there.
 
 ## Install
 
@@ -93,25 +109,27 @@ After that, open the graph view.
 
 ## Privacy
 
-Grape Clusters doesn't connect to the internet and never touches your notes. The only file it writes is its own settings file. The whole plugin is one file, `main.js`, without any dependencies, so you can read all of it.
+Grape Clusters doesn't connect to the internet and never touches your notes. The only file it writes is its own settings file, and the only other one it reads is your graph settings, to see how long your links are. The plugin itself is one file, `main.js`, with `manifest.json` next to it so Obsidian knows what it is. Nothing else comes with it.
 
-GitHub builds every release itself from the tagged commit and adds an attestation, a signed record of where the files came from. To check a download, run `gh attestation verify main.js --owner creativemindrito`.
+Every release is put together by GitHub itself, straight from the tagged version of this repository, and GitHub signs a record of which files came out of it. If you use GitHub's command line tool and want to check a download against that record, run `gh attestation verify main.js --owner creativemindrito`.
 
 ## Heads-up
 
-Grape Clusters hooks into parts of the graph view that aren't an official Obsidian API. If an update changes those parts, it won't break your graph. It stops doing anything and tells you once, and turning it off always brings the normal graph back.
+Grape Clusters reaches into parts of the graph view that Obsidian doesn't officially open up to plugins, and with Ring on it also holds notes in place, the same way Obsidian does while you drag one. If an update changes those parts it won't break your graph: the most that happens is that Grape Clusters stops doing its work, and turning it off always brings the normal graph back. If it can't recognize the graph at all, it says so once and leaves everything alone. If only the fading of the links stops working, it goes quiet and the clusters carry on.
 
-So far I've only tested it on Obsidian 1.13 on a computer. It changes the big graph view and leaves the local graph in the sidebar as it is.
+It needs Obsidian 1.13 or newer. I've only tested it on a computer, though there's nothing in it that a phone can't run. It changes the big graph view and leaves the local graph in the sidebar as it is.
 
 ## If something looks off
 
 | What you see | What to do |
 |---|---|
 | Nothing changes at all | Check that you're in the big graph view and not the local graph. Still the same? Close the graph tab and open it again. |
-| The clusters drift apart when you drag a note | Set *Center force* under *Forces* to 0.15 or higher. Grape Clusters takes away the pull between folders, so center force is what holds everything together. |
-| A folder is a loose handful of dots | Its notes don't link to each other. Give the folder an index note that links to every note in it. |
-| Your subfolders are one big bunch | Clusters form at the top-level folders. Set *Folder depth* to 2 and every subfolder gets its own. |
-| Notes in the root of your vault float around the edge | Root notes don't get a cluster of their own. Link one to the main note of a folder and it hangs on to that folder. |
+| The clusters drift apart when you drag a note | Set *Center force* under *Forces* to 0.15 or higher. Grape Clusters takes a lot of pull away, so center force is what holds the whole graph together. |
+| A folder is a loose handful of dots | Its notes hardly link to each other, so there's nothing to pull them together. Give that folder a note that links to everything in it; Grape Clusters takes that as the main note. |
+| One note drifts away from its own cluster | With *Spokes* on, a note that doesn't link to the main note has nothing pulling it in. Link it to the main note, or turn *Spokes* off so the links between the notes pull again. |
+| You don't use folders | Then there's nothing to cluster by. Everything sits in the root, no cluster forms, and the only thing you'll notice is that your links look fainter. |
+| Your subfolders are one big cluster | Clusters form at your top-level folders. Set *Folder depth* to 2 and every subfolder gets its own. |
+| Notes in the root of your vault float around the edge | Root notes don't get a cluster of their own. Link one to the main note of a folder and it hangs on to that cluster. With *Ring* on, the root note that links to the most main notes goes in the middle instead. |
 | A tag or attachment floats on its own | It's used in more than one folder, so it stays loose on purpose. Otherwise one `#todo` could pull all those folders into a knot. |
 
 ## Uninstall
